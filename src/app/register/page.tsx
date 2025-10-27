@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,15 +98,8 @@ export default function RegisterPage() {
         <div className="bg-card p-8 rounded-lg shadow-lg">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <Link href="/">
-              <div className="relative h-16 w-40">
-                <Image
-                  src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/website-logo-1761483463156.jpeg?width=400&height=400&resize=contain"
-                  alt="Ruprikal Logo"
-                  fill
-                  className="object-contain"
-                />
-              </div>
+            <Link href="/" className="text-3xl font-bold text-primary">
+              Ruprikal
             </Link>
           </div>
 
@@ -153,6 +145,7 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
                 disabled={loading}
+                autoComplete="off"
               />
               <p className="text-xs text-muted-foreground mt-1">
                 At least 6 characters
@@ -171,6 +164,7 @@ export default function RegisterPage() {
                 }
                 required
                 disabled={loading}
+                autoComplete="off"
               />
             </div>
 

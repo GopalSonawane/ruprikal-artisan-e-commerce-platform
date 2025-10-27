@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: number;
@@ -22,17 +23,56 @@ interface Product {
 export default function ProductCard({ product }: { product: Product }) {
   const { data: session } = useSession();
   const router = useRouter();
+  const { toast } = useToast();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-  const imageUrl = product.images && product.images.length > 0
+  const imageUrl = !imageError && product.images && product.images.length > 0
     ? product.images[0]
-    : `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop`;
+    : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop";
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!session?.user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${product.slug}`)}`);
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          productId: product.id,
+          quantity: 1,
+        }),
+      });
+
+      if (res.ok) {
+        toast({
+          title: "Added to Cart",
+          description: `${product.name} has been added to your cart`,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add to cart",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!session?.user) {
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${product.slug}`)}`);
       return;
     }
 
@@ -47,8 +87,14 @@ export default function ProductCard({ product }: { product: Product }) {
           quantity: 1,
         }),
       });
+      router.push("/checkout");
     } catch (error) {
       console.error("Failed to add to cart:", error);
+      toast({
+        title: "Error",
+        description: "Failed to proceed to checkout",
+        variant: "destructive",
+      });
     } finally {
       setIsAddingToCart(false);
     }
@@ -57,13 +103,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const handleAddToWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!session?.user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${product.slug}`)}`);
       return;
     }
 
     setIsAddingToWishlist(true);
     try {
-      await fetch("/api/wishlist", {
+      const res = await fetch("/api/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -71,6 +117,13 @@ export default function ProductCard({ product }: { product: Product }) {
           productId: product.id,
         }),
       });
+
+      if (res.ok) {
+        toast({
+          title: "Added to Wishlist",
+          description: `${product.name} has been added to your wishlist`,
+        });
+      }
     } catch (error) {
       console.error("Failed to add to wishlist:", error);
     } finally {
@@ -88,6 +141,8 @@ export default function ProductCard({ product }: { product: Product }) {
               alt={product.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={() => setImageError(true)}
+              unoptimized
             />
             {product.featured && (
               <Badge className="absolute top-2 left-2">Featured</Badge>
@@ -111,14 +166,26 @@ export default function ProductCard({ product }: { product: Product }) {
             <span className="text-lg font-bold text-primary">
               ₹{product.basePrice.toFixed(2)}
             </span>
+          </div>
+          <div className="flex gap-2 w-full">
             <Button
               size="sm"
+              variant="outline"
               onClick={handleAddToCart}
               disabled={isAddingToCart}
-              className="gap-1"
+              className="flex-1 gap-1"
             >
               <ShoppingCart className="h-4 w-4" />
               Add
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleBuyNow}
+              disabled={isAddingToCart}
+              className="flex-1 gap-1"
+            >
+              <Zap className="h-4 w-4" />
+              Buy
             </Button>
           </div>
         </CardFooter>

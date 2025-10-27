@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Heart, ShoppingCart, Truck, Check, X } from "lucide-react";
+import { Heart, ShoppingCart, Truck, Check, Zap } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +36,8 @@ export default function ProductDetailPage() {
   const [checkingPincode, setCheckingPincode] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   useEffect(() => {
     if (params.slug) {
@@ -103,10 +105,11 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     if (!session?.user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${params.slug}`)}`);
       return;
     }
 
+    setAddingToCart(true);
     try {
       await fetch("/api/cart", {
         method: "POST",
@@ -129,12 +132,45 @@ export default function ProductDetailPage() {
         description: "Failed to add product to cart",
         variant: "destructive",
       });
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!session?.user) {
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${params.slug}`)}`);
+      return;
+    }
+
+    setAddingToCart(true);
+    try {
+      await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: session.user.id,
+          productId: product.id,
+          variantId: selectedVariant?.id,
+          quantity,
+        }),
+      });
+      router.push("/checkout");
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      toast({
+        title: "Error",
+        description: "Failed to proceed to checkout",
+        variant: "destructive",
+      });
+    } finally {
+      setAddingToCart(false);
     }
   };
 
   const handleAddToWishlist = async () => {
     if (!session?.user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(`/products/${params.slug}`)}`);
       return;
     }
 
@@ -182,8 +218,7 @@ export default function ProductDetailPage() {
   }
 
   const currentPrice = selectedVariant?.price || product.basePrice;
-  const imageUrl =
-    product.images && product.images.length > 0
+  const imageUrl = !imageError && product.images && product.images.length > 0
       ? product.images[0]
       : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=800&fit=crop";
 
@@ -195,16 +230,29 @@ export default function ProductDetailPage() {
           {/* Product Images */}
           <div>
             <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-4">
-              <Image src={imageUrl} alt={product.name} fill className="object-cover" />
+              <Image 
+                src={imageUrl} 
+                alt={product.name} 
+                fill 
+                className="object-cover" 
+                onError={() => setImageError(true)}
+                unoptimized
+              />
               {product.featured && (
                 <Badge className="absolute top-4 left-4">Featured</Badge>
               )}
             </div>
-            {product.images && product.images.length > 1 && (
+            {!imageError && product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
                 {product.images.slice(1, 5).map((img: string, idx: number) => (
                   <div key={idx} className="relative aspect-square rounded-md overflow-hidden bg-muted">
-                    <Image src={img} alt={`${product.name} ${idx + 2}`} fill className="object-cover" />
+                    <Image 
+                      src={img} 
+                      alt={`${product.name} ${idx + 2}`} 
+                      fill 
+                      className="object-cover"
+                      unoptimized
+                    />
                   </div>
                 ))}
               </div>
@@ -271,9 +319,24 @@ export default function ProductDetailPage() {
 
             {/* Actions */}
             <div className="flex gap-4 mb-6">
-              <Button size="lg" className="flex-1" onClick={handleAddToCart}>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="flex-1" 
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+              >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
+              </Button>
+              <Button 
+                size="lg" 
+                className="flex-1" 
+                onClick={handleBuyNow}
+                disabled={addingToCart}
+              >
+                <Zap className="mr-2 h-5 w-5" />
+                Buy Now
               </Button>
               <Button size="lg" variant="outline" onClick={handleAddToWishlist}>
                 <Heart className="h-5 w-5" />

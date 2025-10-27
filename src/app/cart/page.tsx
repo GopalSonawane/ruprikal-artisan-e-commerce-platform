@@ -21,6 +21,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [discountCode, setDiscountCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     if (session?.user) {
@@ -193,9 +194,9 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => {
-              const imageUrl =
-                item.product?.images?.[0] ||
-                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop";
+              const imageUrl = !imageErrors[item.id] && item.product?.images?.[0]
+                ? item.product.images[0]
+                : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop";
               const price = item.variant?.price || item.product?.basePrice || 0;
 
               return (
@@ -203,12 +204,14 @@ export default function CartPage() {
                   key={item.id}
                   className="flex gap-4 p-4 bg-card rounded-lg border"
                 >
-                  <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden">
+                  <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-muted">
                     <Image
                       src={imageUrl}
                       alt={item.product?.name || "Product"}
                       fill
                       className="object-cover"
+                      onError={() => setImageErrors(prev => ({ ...prev, [item.id]: true }))}
+                      unoptimized
                     />
                   </div>
 

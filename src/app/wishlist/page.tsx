@@ -17,6 +17,7 @@ export default function WishlistPage() {
   const { toast } = useToast();
   const [wishlistItems, setWishlistItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     if (session?.user) {
@@ -125,19 +126,21 @@ export default function WishlistPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {wishlistItems.map((item) => {
-            const imageUrl =
-              item.product?.images?.[0] ||
-              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop";
+            const imageUrl = !imageErrors[item.id] && item.product?.images?.[0]
+              ? item.product.images[0]
+              : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop";
 
             return (
               <div key={item.id} className="bg-card rounded-lg border overflow-hidden">
                 <Link href={`/products/${item.product?.slug}`}>
-                  <div className="relative aspect-square">
+                  <div className="relative aspect-square bg-muted">
                     <Image
                       src={imageUrl}
                       alt={item.product?.name || "Product"}
                       fill
                       className="object-cover"
+                      onError={() => setImageErrors(prev => ({ ...prev, [item.id]: true }))}
+                      unoptimized
                     />
                   </div>
                 </Link>

@@ -70,14 +70,17 @@ export default async function HomePage() {
               {slides.length > 0 ? (
                 slides.map((slide: any) => (
                   <CarouselItem key={slide.id}>
-                    <div className="relative h-[400px] md:h-[500px] lg:h-[600px]">
-                      <Image
-                        src={slide.imageUrl || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop'}
-                        alt={slide.title}
-                        fill
-                        className="object-cover"
-                        priority
-                      />
+                    <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-muted">
+                      {slide.imageUrl && (
+                        <Image
+                          src={slide.imageUrl}
+                          alt={slide.title}
+                          fill
+                          className="object-cover"
+                          priority
+                          unoptimized
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30" />
                       <div className="absolute inset-0 flex items-center">
                         <div className="container mx-auto px-4">
@@ -194,12 +197,15 @@ export default async function HomePage() {
                     className="group"
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-2">
-                      <Image
-                        src={category.imageUrl || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&h=400&fit=crop'}
-                        alt={category.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+                      {category.imageUrl && (
+                        <Image
+                          src={category.imageUrl}
+                          alt={category.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          unoptimized
+                        />
+                      )}
                     </div>
                     <h3 className="font-semibold text-center group-hover:text-primary transition-colors">
                       {category.name}
