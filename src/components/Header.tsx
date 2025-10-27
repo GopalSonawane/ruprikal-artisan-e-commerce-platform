@@ -23,6 +23,7 @@ export default function Header() {
   const router = useRouter();
   const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (session?.user) {
@@ -88,41 +89,37 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         {/* Top Bar */}
-        <div className="flex h-16 items-center justify-between">
-          {/* Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <nav className="flex flex-col gap-4 mt-8">
-                <NavLinks />
-              </nav>
-            </SheetContent>
-          </Sheet>
-
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-12 w-32 sm:h-14 sm:w-40">
-              <Image
-                src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/website-logo-1761483463156.jpeg?width=400&height=400&resize=contain"
-                alt="Ruprikal Logo"
-                fill
-                className="object-contain"
-                priority
-              />
+        <div className="flex h-16 items-center gap-4">
+          {/* Logo - Left Side */}
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <div className="relative h-10 w-28 sm:h-12 sm:w-36">
+              {!imageError ? (
+                <Image
+                  src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/website-logo-1761483463156.jpeg"
+                  alt="Ruprikal Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                  onError={() => setImageError(true)}
+                  unoptimized
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full">
+                  <span className="text-xl sm:text-2xl font-bold text-primary">
+                    Ruprikal
+                  </span>
+                </div>
+              )}
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-medium">
+          {/* Desktop Navigation - Center */}
+          <nav className="hidden lg:flex items-center gap-6 text-sm font-medium flex-1 justify-center">
             <NavLinks />
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto">
             {/* Search - Desktop */}
             <form onSubmit={handleSearch} className="hidden md:flex items-center gap-2">
               <Input
@@ -191,6 +188,20 @@ export default function Header() {
                 <Link href="/login">Sign In</Link>
               </Button>
             )}
+
+            {/* Mobile Menu - Right Side */}
+            <Sheet>
+              <SheetTrigger asChild className="lg:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col gap-4 mt-8">
+                  <NavLinks />
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
