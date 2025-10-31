@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, User, Menu, Search, LogOut } from "lucide-react";
+import { ShoppingCart, Heart, User, Menu, Search, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -24,10 +24,12 @@ export default function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [imageError, setImageError] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (session?.user) {
       fetchCartCount();
+      checkAdminStatus();
     }
   }, [session]);
 
@@ -38,6 +40,26 @@ export default function Header() {
       setCartCount(data.length || 0);
     } catch (error) {
       console.error("Failed to fetch cart count:", error);
+    }
+  };
+
+  const checkAdminStatus = async () => {
+    try {
+      const token = localStorage.getItem("bearer_token");
+      const res = await fetch(`/api/user-profiles?userId=${session?.user?.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const profiles = await res.json();
+        const userProfile = profiles.find((p: any) => p.userId === session?.user?.id);
+        if (userProfile?.isAdmin) {
+          setIsAdmin(true);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to check admin status:", error);
     }
   };
 
@@ -184,6 +206,17 @@ export default function Header() {
                     </div>
                   </div>
                   <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="text-primary font-medium">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link href="/orders">My Orders</Link>
                   </DropdownMenuItem>
