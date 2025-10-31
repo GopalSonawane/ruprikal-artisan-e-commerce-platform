@@ -64,22 +64,22 @@ export default function Header() {
 
   const NavLinks = () => (
     <>
-      <Link href="/" className="hover:text-primary transition-colors">
+      <Link href="/" className="hover:text-primary transition-colors py-2">
         Home
       </Link>
-      <Link href="/products" className="hover:text-primary transition-colors">
+      <Link href="/products" className="hover:text-primary transition-colors py-2">
         Products
       </Link>
-      <Link href="/products?categoryId=1" className="hover:text-primary transition-colors">
+      <Link href="/products?categoryId=1" className="hover:text-primary transition-colors py-2">
         Handmade Gifts
       </Link>
-      <Link href="/products?categoryId=2" className="hover:text-primary transition-colors">
+      <Link href="/products?categoryId=2" className="hover:text-primary transition-colors py-2">
         T-Shirts
       </Link>
-      <Link href="/products?categoryId=3" className="hover:text-primary transition-colors">
+      <Link href="/products?categoryId=3" className="hover:text-primary transition-colors py-2">
         Paintings
       </Link>
-      <Link href="/products?categoryId=4" className="hover:text-primary transition-colors">
+      <Link href="/products?categoryId=4" className="hover:text-primary transition-colors py-2">
         Home Decor
       </Link>
     </>
@@ -87,12 +87,26 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-3 md:px-4">
         {/* Top Bar */}
-        <div className="flex h-16 items-center gap-4">
-          {/* Logo - Left Side */}
+        <div className="flex h-14 md:h-16 items-center gap-2 md:gap-4">
+          {/* Mobile Menu - Left Side */}
+          <Sheet>
+            <SheetTrigger asChild className="lg:hidden">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] sm:w-[320px]">
+              <nav className="flex flex-col gap-4 mt-8">
+                <NavLinks />
+              </nav>
+            </SheetContent>
+          </Sheet>
+
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="relative h-10 w-28 sm:h-12 sm:w-36">
+            <div className="relative h-8 w-20 sm:h-10 sm:w-28 md:h-12 md:w-36">
               {!imageError ? (
                 <Image
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/website-logo-1761483463156.jpeg"
@@ -105,7 +119,7 @@ export default function Header() {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full w-full">
-                  <span className="text-xl sm:text-2xl font-bold text-primary">
+                  <span className="text-lg sm:text-xl md:text-2xl font-bold text-primary">
                     Ruprikal
                   </span>
                 </div>
@@ -119,7 +133,7 @@ export default function Header() {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1 md:gap-2 ml-auto">
             {/* Search - Desktop */}
             <form onSubmit={handleSearch} className="hidden md:flex items-center gap-2">
               <Input
@@ -133,7 +147,7 @@ export default function Header() {
 
             {/* Wishlist */}
             {session?.user && (
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="h-9 w-9 md:h-10 md:w-10">
                 <Link href="/wishlist">
                   <Heart className="h-5 w-5" />
                 </Link>
@@ -141,11 +155,11 @@ export default function Header() {
             )}
 
             {/* Cart */}
-            <Button variant="ghost" size="icon" className="relative" asChild>
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 md:h-10 md:w-10" asChild>
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  <Badge className="absolute -top-1 -right-1 h-4 w-4 md:h-5 md:w-5 flex items-center justify-center p-0 text-[10px] md:text-xs">
                     {cartCount}
                   </Badge>
                 )}
@@ -156,7 +170,7 @@ export default function Header() {
             {session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 md:h-10 md:w-10">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -184,35 +198,25 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="default" size="sm" asChild>
+              <Button variant="default" size="sm" asChild className="text-xs md:text-sm h-8 md:h-9 px-3 md:px-4">
                 <Link href="/login">Sign In</Link>
               </Button>
             )}
-
-            {/* Mobile Menu - Right Side */}
-            <Sheet>
-              <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col gap-4 mt-8">
-                  <NavLinks />
-                </nav>
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
 
         {/* Mobile Search */}
-        <form onSubmit={handleSearch} className="md:hidden pb-4">
-          <Input
-            type="search"
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <form onSubmit={handleSearch} className="md:hidden pb-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-9"
+            />
+          </div>
         </form>
       </div>
     </header>

@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Truck, Shield, HeadphonesIcon } from "lucide-react";
+import { ArrowRight, Sparkles, Truck, Shield, HeadphonesIcon, ChevronRight } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -73,7 +73,7 @@ export default async function HomePage() {
               {slides.length > 0 ? (
                 slides.map((slide: any, index: number) => (
                   <CarouselItem key={slide.id}>
-                    <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-muted">
+                    <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-muted">
                       {slide.imageUrl && (
                         <Image
                           src={slide.imageUrl}
@@ -89,19 +89,19 @@ export default async function HomePage() {
                       <div className="absolute inset-0 flex items-center">
                         <div className="container mx-auto px-4">
                           <div className="max-w-2xl text-white">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">
                               {slide.title}
                             </h1>
                             {slide.subtitle && (
-                              <p className="text-lg md:text-xl mb-8 text-gray-200">
+                              <p className="text-sm md:text-lg mb-4 md:mb-6 text-gray-200">
                                 {slide.subtitle}
                               </p>
                             )}
                             {slide.buttonText && slide.linkUrl && (
-                              <Button size="lg" asChild>
+                              <Button size="sm" asChild className="md:text-base">
                                 <Link href={slide.linkUrl}>
                                   {slide.buttonText}
-                                  <ArrowRight className="ml-2 h-5 w-5" />
+                                  <ArrowRight className="ml-2 h-4 w-4" />
                                 </Link>
                               </Button>
                             )}
@@ -113,19 +113,19 @@ export default async function HomePage() {
                 ))
               ) : (
                 <CarouselItem>
-                  <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-gradient-to-r from-primary/20 to-accent/20">
+                  <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-r from-primary/20 to-accent/20">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                      <div className="text-center px-4">
+                        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">
                           Welcome to Ruprikal
                         </h1>
-                        <p className="text-lg md:text-xl mb-8 text-muted-foreground">
+                        <p className="text-sm md:text-lg mb-4 md:mb-6 text-muted-foreground">
                           Discover unique handmade products
                         </p>
-                        <Button size="lg" asChild>
+                        <Button size="sm" asChild className="md:text-base">
                           <Link href="/products">
                             Shop Now
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </Button>
                       </div>
@@ -134,73 +134,76 @@ export default async function HomePage() {
                 </CarouselItem>
               )}
             </CarouselContent>
-            <CarouselPrevious className="left-4" />
-            <CarouselNext className="right-4" />
+            <CarouselPrevious className="left-2 md:left-4 h-8 w-8 md:h-10 md:w-10" />
+            <CarouselNext className="right-2 md:right-4 h-8 w-8 md:h-10 md:w-10" />
           </Carousel>
         </section>
 
         {/* Features */}
-        <section className="py-12 bg-muted/50">
+        <section className="py-6 md:py-10 bg-muted/50">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Sparkles className="h-6 w-6 text-primary" />
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 md:mb-3">
+                  <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Unique Products</h3>
-                <p className="text-sm text-muted-foreground">
-                  Handcrafted with love and care
+                <h3 className="font-semibold text-sm md:text-base mb-1">Unique Products</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  Handcrafted with love
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Truck className="h-6 w-6 text-primary" />
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 md:mb-3">
+                  <Truck className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Fast Shipping</h3>
-                <p className="text-sm text-muted-foreground">
-                  Delivered to your doorstep
+                <h3 className="font-semibold text-sm md:text-base mb-1">Fast Shipping</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  Quick delivery
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-primary" />
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 md:mb-3">
+                  <Shield className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Secure Payment</h3>
-                <p className="text-sm text-muted-foreground">
-                  100% secure transactions
+                <h3 className="font-semibold text-sm md:text-base mb-1">Secure Payment</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  100% secure
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <HeadphonesIcon className="h-6 w-6 text-primary" />
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 md:mb-3">
+                  <HeadphonesIcon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">24/7 Support</h3>
-                <p className="text-sm text-muted-foreground">
-                  Always here to help
+                <h3 className="font-semibold text-sm md:text-base mb-1">24/7 Support</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  Always here
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Categories */}
+        {/* Categories - Mobile Optimized */}
         {categories.length > 0 && (
-          <section className="py-16">
+          <section className="py-6 md:py-12">
             <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-bold">Shop by Category</h2>
-                <Button variant="outline" asChild>
-                  <Link href="/products">View All</Link>
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">Shop by Category</h2>
+                <Button variant="ghost" size="sm" asChild className="text-primary">
+                  <Link href="/products">
+                    View All
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
                 {categories.map((category: any) => (
                   <Link
                     key={category.id}
                     href={`/products?categoryId=${category.id}`}
                     className="group"
                   >
-                    <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-2">
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-muted mb-2 shadow-sm">
                       {category.imageUrl && (
                         <Image
                           src={category.imageUrl}
@@ -212,7 +215,7 @@ export default async function HomePage() {
                         />
                       )}
                     </div>
-                    <h3 className="font-semibold text-center group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-xs md:text-sm text-center group-hover:text-primary transition-colors line-clamp-2">
                       {category.name}
                     </h3>
                   </Link>
@@ -222,17 +225,20 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Featured Products */}
+        {/* Featured Products - Mobile Optimized */}
         {featuredProducts.length > 0 && (
-          <section className="py-16 bg-muted/50">
+          <section className="py-6 md:py-12 bg-muted/50">
             <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-bold">Featured Products</h2>
-                <Button variant="outline" asChild>
-                  <Link href="/products?featured=true">View All</Link>
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">Featured Products</h2>
+                <Button variant="ghost" size="sm" asChild className="text-primary">
+                  <Link href="/products?featured=true">
+                    View All
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
                 {featuredProducts.map((product: any) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -241,20 +247,20 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* CTA Section */}
-        <section className="py-16">
+        {/* CTA Section - Mobile Optimized */}
+        <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-8 md:p-12 text-center text-white">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <div className="bg-gradient-to-r from-primary to-primary/80 rounded-xl md:rounded-2xl p-6 md:p-10 text-center text-white">
+              <h2 className="text-xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">
                 Start Shopping Today
               </h2>
-              <p className="text-lg mb-8 text-white/90 max-w-2xl mx-auto">
+              <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-8 text-white/90 max-w-2xl mx-auto">
                 Discover unique handmade gifts, stylish t-shirts, beautiful paintings, and elegant home decor
               </p>
-              <Button size="lg" variant="secondary" asChild>
+              <Button size="sm" variant="secondary" asChild className="md:text-base">
                 <Link href="/products">
                   Browse All Products
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

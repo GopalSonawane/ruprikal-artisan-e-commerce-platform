@@ -133,7 +133,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link href={`/products/${product.slug}`}>
-      <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
+      <Card className="group overflow-hidden hover:shadow-lg transition-shadow h-full">
         <CardContent className="p-0 relative">
           <div className="relative aspect-square overflow-hidden bg-muted">
             <Image
@@ -141,51 +141,54 @@ export default function ProductCard({ product }: { product: Product }) {
               alt={product.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               onError={() => setImageError(true)}
               unoptimized
             />
             {product.featured && (
-              <Badge className="absolute top-2 left-2">Featured</Badge>
+              <Badge className="absolute top-1.5 left-1.5 text-[10px] md:text-xs px-1.5 py-0.5">
+                Featured
+              </Badge>
             )}
             <Button
               variant="secondary"
               size="icon"
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-1.5 right-1.5 h-7 w-7 md:h-8 md:w-8 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={handleAddToWishlist}
               disabled={isAddingToWishlist}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </Button>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col items-start gap-2 p-4">
-          <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+        <CardFooter className="flex flex-col items-start gap-1.5 md:gap-2 p-2 md:p-3">
+          <h3 className="font-medium text-xs md:text-sm line-clamp-2 group-hover:text-primary transition-colors leading-tight">
             {product.name}
           </h3>
           <div className="flex items-center justify-between w-full">
-            <span className="text-lg font-bold text-primary">
-              ₹{product.basePrice.toFixed(2)}
+            <span className="text-base md:text-lg font-bold text-primary">
+              ₹{product.basePrice.toFixed(0)}
             </span>
           </div>
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-1.5 md:gap-2 w-full">
             <Button
               size="sm"
               variant="outline"
               onClick={handleAddToCart}
               disabled={isAddingToCart}
-              className="flex-1 gap-1"
+              className="flex-1 gap-1 h-8 md:h-9 text-xs md:text-sm px-2"
             >
-              <ShoppingCart className="h-4 w-4" />
-              Add
+              <ShoppingCart className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Add</span>
             </Button>
             <Button
               size="sm"
               onClick={handleBuyNow}
               disabled={isAddingToCart}
-              className="flex-1 gap-1"
+              className="flex-1 gap-1 h-8 md:h-9 text-xs md:text-sm px-2"
             >
-              <Zap className="h-4 w-4" />
-              Buy
+              <Zap className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Buy</span>
             </Button>
           </div>
         </CardFooter>
