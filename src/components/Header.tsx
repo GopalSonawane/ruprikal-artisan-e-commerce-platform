@@ -86,7 +86,7 @@ export default function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-blue-500/10 backdrop-blur-md supports-[backdrop-filter]:bg-blue-500/10">
       <div className="container mx-auto px-3 md:px-4">
         {/* Top Bar */}
         <div className="flex h-14 md:h-16 items-center gap-2 md:gap-4">
