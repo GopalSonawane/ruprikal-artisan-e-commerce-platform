@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -95,6 +96,15 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
       <div className="w-full max-w-md">
+        {/* Back to Website Button */}
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Website
+        </Link>
+
         <div className="bg-card p-8 rounded-lg shadow-lg">
           {/* Logo */}
           <div className="flex justify-center mb-8">

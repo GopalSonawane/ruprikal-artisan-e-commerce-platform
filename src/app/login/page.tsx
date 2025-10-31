@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,6 +47,24 @@ export default function LoginPage() {
         description: "You have successfully logged in",
       });
 
+      // Check if user is admin and redirect accordingly
+      const token = localStorage.getItem("bearer_token");
+      const profileRes = await fetch(`/api/user-profiles?userId=${session?.user?.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (profileRes.ok) {
+        const profiles = await profileRes.json();
+        const userProfile = profiles.find((p: any) => p.userId === session?.user?.id);
+        
+        if (userProfile?.isAdmin) {
+          router.push("/admin");
+          return;
+        }
+      }
+
       const redirect = searchParams.get("redirect") || "/";
       router.push(redirect);
     } catch (error) {
@@ -63,6 +82,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
       <div className="w-full max-w-md">
+        {/* Back to Website Button */}
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Website
+        </Link>
+
         <div className="bg-card p-8 rounded-lg shadow-lg">
           {/* Logo */}
           <div className="flex justify-center mb-8">
