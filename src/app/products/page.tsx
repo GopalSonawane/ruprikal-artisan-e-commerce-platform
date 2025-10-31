@@ -90,22 +90,22 @@ export default function ProductsPage() {
   };
 
   const FilterPanel = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h3 className="font-semibold mb-4">Filters</h3>
-        <Button variant="outline" size="sm" onClick={clearFilters} className="w-full">
+        <h3 className="font-semibold mb-3 text-sm md:text-base">Filters</h3>
+        <Button variant="outline" size="sm" onClick={clearFilters} className="w-full text-xs md:text-sm">
           Clear Filters
         </Button>
       </div>
 
       {/* Category Filter */}
       <div>
-        <Label className="mb-2 block">Category</Label>
+        <Label className="mb-2 block text-xs md:text-sm">Category</Label>
         <Select
           value={filters.categoryId}
           onValueChange={(value) => handleFilterChange("categoryId", value)}
         >
-          <SelectTrigger>
+          <SelectTrigger className="text-xs md:text-sm">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
@@ -121,7 +121,7 @@ export default function ProductsPage() {
 
       {/* Price Range */}
       <div>
-        <Label className="mb-2 block">
+        <Label className="mb-2 block text-xs md:text-sm">
           Price Range: ₹{filters.minPrice} - ₹{filters.maxPrice}
         </Label>
         <Slider
@@ -138,7 +138,7 @@ export default function ProductsPage() {
 
       {/* Sort */}
       <div>
-        <Label className="mb-2 block">Sort By</Label>
+        <Label className="mb-2 block text-xs md:text-sm">Sort By</Label>
         <Select
           value={`${filters.sort}-${filters.order}`}
           onValueChange={(value) => {
@@ -147,7 +147,7 @@ export default function ProductsPage() {
             handleFilterChange("order", order);
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger className="text-xs md:text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -166,11 +166,11 @@ export default function ProductsPage() {
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <main className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+        <div className="flex items-center justify-between mb-4 md:mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Products</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-xl md:text-3xl font-bold mb-1">Products</h1>
+            <p className="text-muted-foreground text-xs md:text-sm">
               {loading ? "Loading..." : `${products.length} products found`}
             </p>
           </div>
@@ -178,12 +178,12 @@ export default function ProductsPage() {
           {/* Mobile Filter Toggle */}
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="sm">
-                <SlidersHorizontal className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" className="text-xs">
+                <SlidersHorizontal className="h-3 w-3 md:h-4 md:w-4 mr-1.5" />
                 Filters
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px]">
+            <SheetContent side="left" className="w-[280px] md:w-[300px]">
               <div className="mt-8">
                 <FilterPanel />
               </div>
@@ -191,7 +191,7 @@ export default function ProductsPage() {
           </Sheet>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-8">
           {/* Desktop Filters */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
@@ -202,35 +202,36 @@ export default function ProductsPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             {/* Search */}
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6">
               <Input
                 type="search"
                 placeholder="Search products..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange("search", e.target.value)}
+                className="text-sm"
               />
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="space-y-3">
+                  <div key={i} className="space-y-2 md:space-y-3">
                     <Skeleton className="aspect-square rounded-lg" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-3 md:h-4 w-3/4" />
+                    <Skeleton className="h-3 md:h-4 w-1/2" />
                   </div>
                 ))}
               </div>
             ) : products.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No products found</p>
-                <Button variant="outline" className="mt-4" onClick={clearFilters}>
+              <div className="text-center py-8 md:py-12">
+                <p className="text-muted-foreground text-sm md:text-base">No products found</p>
+                <Button variant="outline" className="mt-3 md:mt-4 text-xs md:text-sm" onClick={clearFilters}>
                   Clear Filters
                 </Button>
               </div>
