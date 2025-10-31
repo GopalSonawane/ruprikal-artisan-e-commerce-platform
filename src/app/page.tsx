@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 
+// Enable static generation with revalidation every 5 minutes
+export const revalidate = 300;
+
 async function getHomepageSlides() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/homepage-slides?isActive=true`, {
-      cache: 'no-store'
+      next: { revalidate: 300 } // Cache for 5 minutes
     });
     if (!res.ok) return [];
     return res.json();
@@ -29,7 +32,7 @@ async function getHomepageSlides() {
 async function getFeaturedProducts() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/products?featured=true&limit=8`, {
-      cache: 'no-store'
+      next: { revalidate: 300 } // Cache for 5 minutes
     });
     if (!res.ok) return [];
     return res.json();
@@ -42,7 +45,7 @@ async function getFeaturedProducts() {
 async function getCategories() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/categories?isActive=true&limit=5`, {
-      cache: 'no-store'
+      next: { revalidate: 600 } // Cache for 10 minutes (categories change less frequently)
     });
     if (!res.ok) return [];
     return res.json();
@@ -68,7 +71,7 @@ export default async function HomePage() {
           <Carousel className="w-full" opts={{ loop: true }}>
             <CarouselContent>
               {slides.length > 0 ? (
-                slides.map((slide: any) => (
+                slides.map((slide: any, index: number) => (
                   <CarouselItem key={slide.id}>
                     <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-muted">
                       {slide.imageUrl && (
@@ -77,8 +80,9 @@ export default async function HomePage() {
                           alt={slide.title}
                           fill
                           className="object-cover"
-                          priority
-                          unoptimized
+                          priority={index === 0}
+                          sizes="100vw"
+                          quality={85}
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30" />
@@ -203,7 +207,8 @@ export default async function HomePage() {
                           alt={category.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          unoptimized
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          quality={75}
                         />
                       )}
                     </div>
