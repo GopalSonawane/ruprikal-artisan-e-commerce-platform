@@ -24,23 +24,19 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Password Mismatch", {
-        description: "Passwords do not match",
-      });
+      toast.error("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("Weak Password", {
-        description: "Password must be at least 6 characters long",
-      });
+      toast.error("Password must be at least 6 characters long");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error, data } = await authClient.signUp.email({
+      const { error } = await authClient.signUp.email({
         email: formData.email,
         name: formData.name,
         password: formData.password,
@@ -49,42 +45,20 @@ export default function RegisterPage() {
       if (error?.code) {
         const errorMessage =
           error.code === "USER_ALREADY_EXISTS"
-            ? "User already registered"
-            : "Registration failed";
-        toast.error("Registration Failed", {
-          description: errorMessage,
-        });
+            ? "This email is already registered. Please sign in instead."
+            : "Registration failed. Please try again.";
+        toast.error(errorMessage);
         setLoading(false);
         return;
       }
 
-      // Create user profile with actual user ID
-      const token = localStorage.getItem("bearer_token");
-      if (data?.user?.id) {
-        await fetch("/api/user-profiles", {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            userId: data.user.id,
-            fullName: formData.name,
-            isAdmin: false,
-          }),
-        });
-      }
-
-      toast.success("Registration Successful", {
-        description: "Your account has been created successfully!",
-      });
-
+      toast.success("Account created successfully! 🎉");
+      
+      // Redirect to login
       router.push("/login?registered=true");
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Error", {
-        description: "An error occurred during registration",
-      });
+      toast.error("An error occurred during registration");
     } finally {
       setLoading(false);
     }

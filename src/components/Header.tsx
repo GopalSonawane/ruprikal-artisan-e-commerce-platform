@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, User, Menu, Search, LogOut, Shield, Package, ChevronDown, Sparkles, Shirt, Frame, Home as HomeIcon, Gift } from "lucide-react";
+import { ShoppingCart, Heart, User, Menu, Search, LogOut, Shield, Package, ChevronDown, Sparkles, Shirt, Frame, Home as HomeIcon, Gift, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { toast } from "sonner";
 
 export default function Header() {
   const { data: session, refetch } = useSession();
@@ -90,7 +91,9 @@ export default function Header() {
     });
     localStorage.removeItem("bearer_token");
     refetch();
+    toast.success("Signed out successfully! 👋");
     router.push("/");
+    setMobileMenuOpen(false);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -98,6 +101,7 @@ export default function Header() {
     if (searchQuery.trim()) {
       router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
       setSearchQuery("");
+      setMobileMenuOpen(false);
     }
   };
 
@@ -120,42 +124,153 @@ export default function Header() {
                 <Menu className="h-5 w-5 text-primary" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[320px] sm:w-[380px] bg-gradient-to-br from-background via-primary/5 to-secondary/5 backdrop-blur-xl border-primary/20">
-              <nav className="flex flex-col gap-6 mt-8">
+            <SheetContent side="left" className="w-full sm:w-[380px] p-0 bg-gradient-to-br from-background via-primary/5 to-secondary/5 backdrop-blur-xl border-primary/20 overflow-y-auto">
+              {/* Mobile Menu Header */}
+              <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-xl border-b border-primary/20 p-4 flex items-center justify-between">
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Ruprikal
+                </Link>
+                <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="h-8 w-8 rounded-lg hover:bg-primary/20">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <nav className="flex flex-col gap-2 p-4">
+                {/* User Info Section */}
+                {session?.user ? (
+                  <div className="mb-4 p-4 rounded-xl bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+                        <span className="text-white font-bold text-lg">{session.user.name?.charAt(0).toUpperCase()}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{session.user.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mb-4 p-4 rounded-xl bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30">
+                    <p className="text-sm font-medium mb-3 text-center">Welcome to Ruprikal! ✨</p>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        asChild 
+                        className="flex-1 bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary transition-all duration-300"
+                      >
+                        <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        asChild 
+                        className="flex-1 border-primary/30 hover:bg-primary/10"
+                      >
+                        <Link href="/register" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Main Navigation */}
                 <Link 
                   href="/" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-lg font-semibold py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-2 border border-transparent hover:border-primary/30"
+                  className="flex items-center gap-3 text-base font-semibold py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30"
                 >
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Home
+                  <Sparkles className="h-5 w-5 text-primary shrink-0" />
+                  <span>Home</span>
                 </Link>
                 <Link 
                   href="/products" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 text-lg font-semibold py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-2 border border-transparent hover:border-primary/30"
+                  className="flex items-center gap-3 text-base font-semibold py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30"
                 >
-                  <Package className="h-5 w-5 text-secondary" />
-                  All Products
+                  <Package className="h-5 w-5 text-secondary shrink-0" />
+                  <span>All Products</span>
                 </Link>
                 
                 <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent my-2" />
                 
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4">Categories</p>
+                {/* Categories */}
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4 mb-1">Categories</p>
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
                     href={cat.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-2 border border-transparent hover:border-primary/30 group"
+                    className="flex items-start gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30 group"
                   >
-                    <cat.icon className="h-5 w-5 text-accent group-hover:scale-110 transition-transform" />
-                    <div>
-                      <p className="font-semibold">{cat.name}</p>
+                    <cat.icon className="h-5 w-5 text-accent group-hover:scale-110 transition-transform shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm">{cat.name}</p>
                       <p className="text-xs text-muted-foreground">{cat.description}</p>
                     </div>
                   </Link>
                 ))}
+
+                {session?.user && (
+                  <>
+                    <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent my-2" />
+                    
+                    {/* User Actions */}
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-4 mb-1">My Account</p>
+                    
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30 text-primary font-semibold"
+                      >
+                        <Shield className="h-5 w-5 shrink-0" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    )}
+                    
+                    <Link
+                      href="/orders"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30"
+                    >
+                      <Package className="h-5 w-5 shrink-0" />
+                      <span>My Orders</span>
+                    </Link>
+                    
+                    <Link
+                      href="/wishlist"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30"
+                    >
+                      <Heart className="h-5 w-5 shrink-0" />
+                      <span>Wishlist</span>
+                    </Link>
+                    
+                    <Link
+                      href="/cart"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-gradient-to-r hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-primary/30"
+                    >
+                      <ShoppingCart className="h-5 w-5 shrink-0" />
+                      <span>Cart</span>
+                      {cartCount > 0 && (
+                        <Badge className="ml-auto bg-gradient-to-r from-primary to-secondary">
+                          {cartCount}
+                        </Badge>
+                      )}
+                    </Link>
+                    
+                    <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent my-2" />
+                    
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-destructive/10 transition-all duration-300 hover:translate-x-1 border border-transparent hover:border-destructive/30 text-destructive font-semibold"
+                    >
+                      <LogOut className="h-5 w-5 shrink-0" />
+                      <span>Sign Out</span>
+                    </button>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
@@ -343,7 +458,7 @@ export default function Header() {
                 variant="default" 
                 size="sm" 
                 asChild 
-                className="h-10 px-6 bg-gradient-to-r from-primary via-secondary to-accent hover:from-accent hover:via-primary hover:to-secondary transition-all duration-500 hover:scale-105 font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-primary/30"
+                className="hidden sm:flex h-10 px-6 bg-gradient-to-r from-primary via-secondary to-accent hover:from-accent hover:via-primary hover:to-secondary transition-all duration-500 hover:scale-105 font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-primary/30"
               >
                 <Link href="/login">Sign In ✨</Link>
               </Button>
