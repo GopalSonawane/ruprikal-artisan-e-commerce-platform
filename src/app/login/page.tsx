@@ -8,13 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { authClient } from "@/lib/auth-client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -27,42 +26,41 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error, data: session } = await authClient.signIn.email({
+      const { error, data } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
         rememberMe: formData.rememberMe,
       });
 
-      if (error) {
-        toast({
-          title: "❌ Login Failed",
-          description: "Invalid email or password",
-          variant: "destructive",
+      if (error?.code) {
+        toast.error("Login Failed", {
+          description: "Invalid email or password. Please try again.",
         });
         setLoading(false);
         return;
       }
 
-      toast({
-        title: "✅ Welcome Back!",
+      toast.success("Welcome Back!", {
         description: "You have successfully logged in",
       });
 
       // Check if user is admin and redirect accordingly
       const token = localStorage.getItem("bearer_token");
-      const profileRes = await fetch(`/api/user-profiles?userId=${session?.user?.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (data?.user?.id) {
+        const profileRes = await fetch(`/api/user-profiles?userId=${data.user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (profileRes.ok) {
-        const profiles = await profileRes.json();
-        const userProfile = profiles.find((p: any) => p.userId === session?.user?.id);
-        
-        if (userProfile?.isAdmin) {
-          router.push("/admin");
-          return;
+        if (profileRes.ok) {
+          const profiles = await profileRes.json();
+          const userProfile = profiles.find((p: any) => p.userId === data.user.id);
+          
+          if (userProfile?.isAdmin) {
+            router.push("/admin");
+            return;
+          }
         }
       }
 
@@ -70,11 +68,10 @@ export default function LoginPage() {
       router.push(redirect);
     } catch (error) {
       console.error("Login error:", error);
-      toast({
-        title: "❌ Error",
+      toast.error("Error", {
         description: "An error occurred during login",
-        variant: "destructive",
       });
+    } finally {
       setLoading(false);
     }
   };

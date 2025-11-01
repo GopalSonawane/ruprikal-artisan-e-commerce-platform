@@ -7,12 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,19 +24,15 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "❌ Password Mismatch",
+      toast.error("Password Mismatch", {
         description: "Passwords do not match",
-        variant: "destructive",
       });
       return;
     }
 
     if (formData.password.length < 6) {
-      toast({
-        title: "❌ Weak Password",
+      toast.error("Weak Password", {
         description: "Password must be at least 6 characters long",
-        variant: "destructive",
       });
       return;
     }
@@ -45,7 +40,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { error } = await authClient.signUp.email({
+      const { error, data } = await authClient.signUp.email({
         email: formData.email,
         name: formData.name,
         password: formData.password,
@@ -56,43 +51,41 @@ export default function RegisterPage() {
           error.code === "USER_ALREADY_EXISTS"
             ? "User already registered"
             : "Registration failed";
-        toast({
-          title: "❌ Registration Failed",
+        toast.error("Registration Failed", {
           description: errorMessage,
-          variant: "destructive",
         });
         setLoading(false);
         return;
       }
 
-      // Create user profile
+      // Create user profile with actual user ID
       const token = localStorage.getItem("bearer_token");
-      await fetch("/api/user-profiles", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId: formData.email,
-          fullName: formData.name,
-          isAdmin: false,
-        }),
-      });
+      if (data?.user?.id) {
+        await fetch("/api/user-profiles", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            userId: data.user.id,
+            fullName: formData.name,
+            isAdmin: false,
+          }),
+        });
+      }
 
-      toast({
-        title: "✅ Registration Successful",
-        description: "Your account has been created",
+      toast.success("Registration Successful", {
+        description: "Your account has been created successfully!",
       });
 
       router.push("/login?registered=true");
     } catch (error) {
       console.error("Registration error:", error);
-      toast({
-        title: "❌ Error",
+      toast.error("Error", {
         description: "An error occurred during registration",
-        variant: "destructive",
       });
+    } finally {
       setLoading(false);
     }
   };
