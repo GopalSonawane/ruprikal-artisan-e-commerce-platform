@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
@@ -13,19 +13,52 @@ import {
   Tag,
   Truck,
   LogOut,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session, isPending, refetch } = useSession();
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/login");
+      router.push("/login?redirect=/admin");
+    } else if (session?.user) {
+      checkAdminStatus();
     }
   }, [session, isPending, router]);
+
+  const checkAdminStatus = async () => {
+    setIsCheckingAdmin(true);
+    try {
+      const token = localStorage.getItem("bearer_token");
+      const res = await fetch(`/api/user-profiles?userId=${session?.user?.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (res.ok) {
+        const profiles = await res.json();
+        const userProfile = profiles.find((p: any) => p.userId === session?.user?.id);
+        if (userProfile?.isAdmin) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to check admin status:", error);
+      setIsAdmin(false);
+    } finally {
+      setIsCheckingAdmin(false);
+    }
+  };
 
   const handleSignOut = async () => {
     const token = localStorage.getItem("bearer_token");
@@ -41,12 +74,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push("/");
   };
 
-  if (isPending) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (isPending || isCheckingAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading admin panel...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!session?.user) {
     return null;
+  }
+
+  // Show access denied if not admin
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="max-w-md w-full">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="ml-2">
+              <strong>Access Denied</strong>
+              <p className="mt-2">You don't have permission to access the admin dashboard.</p>
+              <p className="text-sm mt-2">Current user: {session.user.email}</p>
+            </AlertDescription>
+          </Alert>
+          <div className="mt-6 flex gap-4">
+            <Button variant="outline" onClick={() => router.push("/")} className="flex-1">
+              Go to Home
+            </Button>
+            <Button variant="default" onClick={handleSignOut} className="flex-1">
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const menuItems = [
@@ -94,7 +160,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div className="p-4 border-t">
           <div className="mb-4">
-            <p className="text-sm font-medium">{session.user.name}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <p className="text-sm font-medium">{session.user.name}</p>
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">Admin</span>
+            </div>
             <p className="text-xs text-muted-foreground">{session.user.email}</p>
           </div>
           <Button variant="outline" className="w-full" onClick={handleSignOut}>
