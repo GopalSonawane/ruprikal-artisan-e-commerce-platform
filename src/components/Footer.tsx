@@ -3,54 +3,54 @@ import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-muted mt-16">
+    <footer className="bg-gradient-to-br from-muted to-primary/5 mt-16 border-t border-primary/10">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">About Ruprikal</h3>
+          <div className="animate-fadeIn">
+            <h3 className="font-semibold text-lg mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">About Ruprikal</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Your destination for unique handmade gifts, printed t-shirts, paintings, and home decor products.
+              Your destination for unique handmade gifts, printed t-shirts, paintings, and home decor products. ✨
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-all hover:scale-125 duration-300">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-all hover:scale-125 duration-300">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-all hover:scale-125 duration-300">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
+          <div className="animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+            <h3 className="font-semibold text-lg mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   All Products
                 </Link>
               </li>
               <li>
-                <Link href="/products?categoryId=1" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products?categoryId=1" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Handmade Gifts
                 </Link>
               </li>
               <li>
-                <Link href="/products?categoryId=2" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products?categoryId=2" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Printed T-Shirts
                 </Link>
               </li>
               <li>
-                <Link href="/products?categoryId=3" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products?categoryId=3" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Paintings
                 </Link>
               </li>
               <li>
-                <Link href="/products?categoryId=4" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products?categoryId=4" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Home Decor
                 </Link>
               </li>
@@ -58,31 +58,31 @@ export default function Footer() {
           </div>
 
           {/* Customer Service */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Customer Service</h3>
+          <div className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+            <h3 className="font-semibold text-lg mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/orders" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/orders" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="/cart" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/cart" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Shopping Cart
                 </Link>
               </li>
               <li>
-                <Link href="/wishlist" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/wishlist" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Wishlist
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Shipping Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all hover:translate-x-1 inline-block">
                   Return Policy
                 </a>
               </li>
@@ -90,18 +90,18 @@ export default function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Contact Us</h3>
+          <div className="animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+            <h3 className="font-semibold text-lg mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Contact Us</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2 text-muted-foreground">
+              <li className="flex items-start gap-2 text-muted-foreground hover:text-primary transition-all">
                 <MapPin className="h-5 w-5 flex-shrink-0 mt-0.5" />
                 <span>Mumbai, Maharashtra, India</span>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
+              <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-all">
                 <Phone className="h-5 w-5 flex-shrink-0" />
                 <span>+91 98765 43210</span>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
+              <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-all">
                 <Mail className="h-5 w-5 flex-shrink-0" />
                 <span>support@ruprikal.com</span>
               </li>
@@ -109,8 +109,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Ruprikal. All rights reserved.</p>
+        <div className="border-t border-primary/10 mt-8 pt-8 text-center text-sm text-muted-foreground">
+          <p className="animate-fadeIn">&copy; {new Date().getFullYear()} Ruprikal. All rights reserved. Made with ❤️</p>
         </div>
       </div>
     </footer>

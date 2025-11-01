@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
     if (formData.password !== formData.confirmPassword) {
       toast({
-        title: "Password Mismatch",
+        title: "❌ Password Mismatch",
         description: "Passwords do not match",
         variant: "destructive",
       });
@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
     if (formData.password.length < 6) {
       toast({
-        title: "Weak Password",
+        title: "❌ Weak Password",
         description: "Password must be at least 6 characters long",
         variant: "destructive",
       });
@@ -57,17 +57,22 @@ export default function RegisterPage() {
             ? "User already registered"
             : "Registration failed";
         toast({
-          title: "Registration Failed",
+          title: "❌ Registration Failed",
           description: errorMessage,
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
       // Create user profile
+      const token = localStorage.getItem("bearer_token");
       await fetch("/api/user-profiles", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           userId: formData.email,
           fullName: formData.name,
@@ -76,7 +81,7 @@ export default function RegisterPage() {
       });
 
       toast({
-        title: "Registration Successful",
+        title: "✅ Registration Successful",
         description: "Your account has been created",
       });
 
@@ -84,43 +89,42 @@ export default function RegisterPage() {
     } catch (error) {
       console.error("Registration error:", error);
       toast({
-        title: "Error",
+        title: "❌ Error",
         description: "An error occurred during registration",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 px-4 animate-fadeIn">
       <div className="w-full max-w-md">
         {/* Back to Website Button */}
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-4 transition-all duration-300 hover:scale-105 font-medium"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Website
         </Link>
 
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        <div className="bg-card/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border-2 border-primary/20 animate-scaleIn">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <Link href="/" className="text-3xl font-bold text-primary">
+            <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-110 transition-transform duration-300">
               Ruprikal
             </Link>
           </div>
 
-          <h1 className="text-2xl font-bold text-center mb-2">Create Account</h1>
+          <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Create Account</h1>
           <p className="text-center text-muted-foreground mb-8">
-            Join Ruprikal today
+            Join Ruprikal today ✨
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
+            <div className="animate-slideIn">
+              <Label htmlFor="name" className="font-medium">Full Name</Label>
               <Input
                 id="name"
                 type="text"
@@ -129,11 +133,12 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
                 disabled={loading}
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <div>
-              <Label htmlFor="email">Email</Label>
+            <div className="animate-slideIn" style={{ animationDelay: '0.1s' }}>
+              <Label htmlFor="email" className="font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -142,11 +147,12 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
                 disabled={loading}
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
+            <div className="animate-slideIn" style={{ animationDelay: '0.2s' }}>
+              <Label htmlFor="password" className="font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -156,14 +162,15 @@ export default function RegisterPage() {
                 required
                 disabled={loading}
                 autoComplete="off"
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
               <p className="text-xs text-muted-foreground mt-1">
                 At least 6 characters
               </p>
             </div>
 
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="animate-slideIn" style={{ animationDelay: '0.3s' }}>
+              <Label htmlFor="confirmPassword" className="font-medium">Confirm Password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -175,17 +182,22 @@ export default function RegisterPage() {
                 required
                 disabled={loading}
                 autoComplete="off"
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Create Account"}
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary transition-all duration-300 hover:scale-105 font-semibold shadow-lg hover:shadow-xl" 
+              disabled={loading}
+            >
+              {loading ? "Creating account... ⏳" : "Create Account 🚀"}
             </Button>
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link href="/login" className="text-primary hover:text-secondary font-semibold hover:underline transition-all">
               Sign in
             </Link>
           </p>

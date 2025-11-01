@@ -35,15 +35,16 @@ export default function LoginPage() {
 
       if (error) {
         toast({
-          title: "Login Failed",
+          title: "❌ Login Failed",
           description: "Invalid email or password",
           variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
       toast({
-        title: "Welcome Back!",
+        title: "✅ Welcome Back!",
         description: "You have successfully logged in",
       });
 
@@ -70,51 +71,50 @@ export default function LoginPage() {
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: "Error",
+        title: "❌ Error",
         description: "An error occurred during login",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 px-4 animate-fadeIn">
       <div className="w-full max-w-md">
         {/* Back to Website Button */}
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-4 transition-all duration-300 hover:scale-105 font-medium"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Website
         </Link>
 
-        <div className="bg-card p-8 rounded-lg shadow-lg">
+        <div className="bg-card/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border-2 border-primary/20 animate-scaleIn">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <Link href="/" className="text-3xl font-bold text-primary">
+            <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-110 transition-transform duration-300">
               Ruprikal
             </Link>
           </div>
 
-          <h1 className="text-2xl font-bold text-center mb-2">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Welcome Back</h1>
           <p className="text-center text-muted-foreground mb-8">
-            Sign in to your account
+            Sign in to your account 👋
           </p>
 
           {searchParams.get("registered") && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-3 mb-6">
-              <p className="text-sm text-green-800 dark:text-green-200">
-                Registration successful! Please sign in.
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-6 animate-slideIn">
+              <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                ✅ Registration successful! Please sign in.
               </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
+            <div className="animate-slideIn">
+              <Label htmlFor="email" className="font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -123,11 +123,12 @@ export default function LoginPage() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
                 disabled={loading}
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
+            <div className="animate-slideIn" style={{ animationDelay: '0.1s' }}>
+              <Label htmlFor="password" className="font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -137,10 +138,11 @@ export default function LoginPage() {
                 required
                 disabled={loading}
                 autoComplete="off"
+                className="mt-1.5 border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 animate-slideIn" style={{ animationDelay: '0.2s' }}>
               <Checkbox
                 id="remember"
                 checked={formData.rememberMe}
@@ -157,14 +159,18 @@ export default function LoginPage() {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary transition-all duration-300 hover:scale-105 font-semibold shadow-lg hover:shadow-xl" 
+              disabled={loading}
+            >
+              {loading ? "Signing in... ⏳" : "Sign In 🚀"}
             </Button>
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium">
+            <Link href="/register" className="text-primary hover:text-secondary font-semibold hover:underline transition-all">
               Sign up
             </Link>
           </p>

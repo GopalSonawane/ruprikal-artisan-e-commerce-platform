@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchParams } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function ProductsPage() {
@@ -45,8 +45,10 @@ export default function ProductsPage() {
   const fetchCategories = async () => {
     try {
       const res = await fetch("/api/categories?isActive=true");
-      const data = await res.json();
-      setCategories(data);
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     }
@@ -65,8 +67,10 @@ export default function ProductsPage() {
       params.append("isActive", "true");
 
       const res = await fetch(`/api/products?${params}`);
-      const data = await res.json();
-      setProducts(data);
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
     } catch (error) {
       console.error("Failed to fetch products:", error);
     } finally {
@@ -91,21 +95,22 @@ export default function ProductsPage() {
 
   const FilterPanel = () => (
     <div className="space-y-4 md:space-y-6">
-      <div>
-        <h3 className="font-semibold mb-3 text-sm md:text-base">Filters</h3>
-        <Button variant="outline" size="sm" onClick={clearFilters} className="w-full text-xs md:text-sm">
-          Clear Filters
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-sm md:text-base bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Filters</h3>
+        <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs hover:scale-105 transition-all">
+          <X className="h-4 w-4 mr-1" />
+          Clear
         </Button>
       </div>
 
       {/* Category Filter */}
-      <div>
-        <Label className="mb-2 block text-xs md:text-sm">Category</Label>
+      <div className="animate-slideIn">
+        <Label className="mb-2 block text-xs md:text-sm font-medium">Category</Label>
         <Select
           value={filters.categoryId}
-          onValueChange={(value) => handleFilterChange("categoryId", value)}
+          onValueChange={(value) => handleFilterChange("categoryId", value === "all" ? "" : value)}
         >
-          <SelectTrigger className="text-xs md:text-sm">
+          <SelectTrigger className="text-xs md:text-sm border-primary/20 focus:border-primary transition-all">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
@@ -120,9 +125,9 @@ export default function ProductsPage() {
       </div>
 
       {/* Price Range */}
-      <div>
-        <Label className="mb-2 block text-xs md:text-sm">
-          Price Range: ₹{filters.minPrice} - ₹{filters.maxPrice}
+      <div className="animate-slideIn" style={{ animationDelay: '0.1s' }}>
+        <Label className="mb-2 block text-xs md:text-sm font-medium">
+          Price Range: <span className="text-primary font-bold">₹{filters.minPrice} - ₹{filters.maxPrice}</span>
         </Label>
         <Slider
           value={[filters.minPrice, filters.maxPrice]}
@@ -137,8 +142,8 @@ export default function ProductsPage() {
       </div>
 
       {/* Sort */}
-      <div>
-        <Label className="mb-2 block text-xs md:text-sm">Sort By</Label>
+      <div className="animate-slideIn" style={{ animationDelay: '0.2s' }}>
+        <Label className="mb-2 block text-xs md:text-sm font-medium">Sort By</Label>
         <Select
           value={`${filters.sort}-${filters.order}`}
           onValueChange={(value) => {
@@ -147,7 +152,7 @@ export default function ProductsPage() {
             handleFilterChange("order", order);
           }}
         >
-          <SelectTrigger className="text-xs md:text-sm">
+          <SelectTrigger className="text-xs md:text-sm border-primary/20 focus:border-primary transition-all">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -166,10 +171,10 @@ export default function ProductsPage() {
   return (
     <>
       <Header />
-      <main className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+      <main className="container mx-auto px-3 md:px-4 py-4 md:py-8 animate-fadeIn">
         <div className="flex items-center justify-between mb-4 md:mb-8">
-          <div>
-            <h1 className="text-xl md:text-3xl font-bold mb-1">Products</h1>
+          <div className="animate-slideIn">
+            <h1 className="text-xl md:text-3xl font-bold mb-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Products 🛍️</h1>
             <p className="text-muted-foreground text-xs md:text-sm">
               {loading ? "Loading..." : `${products.length} products found`}
             </p>
@@ -178,12 +183,12 @@ export default function ProductsPage() {
           {/* Mobile Filter Toggle */}
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="sm" className="text-xs">
+              <Button variant="outline" size="sm" className="text-xs hover:bg-primary hover:text-primary-foreground transition-all hover:scale-105">
                 <SlidersHorizontal className="h-3 w-3 md:h-4 md:w-4 mr-1.5" />
                 Filters
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] md:w-[300px]">
+            <SheetContent side="left" className="w-[280px] md:w-[300px] animate-slideIn">
               <div className="mt-8">
                 <FilterPanel />
               </div>
@@ -194,7 +199,7 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-8">
           {/* Desktop Filters */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24">
+            <div className="sticky top-24 bg-gradient-to-br from-card to-primary/5 p-6 rounded-2xl border-2 border-primary/20 shadow-lg">
               <FilterPanel />
             </div>
           </aside>
@@ -202,23 +207,23 @@ export default function ProductsPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             {/* Search */}
-            <div className="mb-4 md:mb-6">
+            <div className="mb-4 md:mb-6 animate-slideIn">
               <Input
                 type="search"
-                placeholder="Search products..."
+                placeholder="Search products... 🔍"
                 value={filters.search}
                 onChange={(e) => handleFilterChange("search", e.target.value)}
-                className="text-sm"
+                className="text-sm border-primary/20 focus:border-primary transition-all"
               />
             </div>
 
             {loading ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="space-y-2 md:space-y-3">
-                    <Skeleton className="aspect-square rounded-lg" />
-                    <Skeleton className="h-3 md:h-4 w-3/4" />
-                    <Skeleton className="h-3 md:h-4 w-1/2" />
+                  <div key={i} className="space-y-2 md:space-y-3 animate-pulse">
+                    <Skeleton className="aspect-square rounded-lg bg-primary/10" />
+                    <Skeleton className="h-3 md:h-4 w-3/4 bg-primary/10" />
+                    <Skeleton className="h-3 md:h-4 w-1/2 bg-primary/10" />
                   </div>
                 ))}
               </div>
@@ -229,9 +234,9 @@ export default function ProductsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 md:py-12">
-                <p className="text-muted-foreground text-sm md:text-base">No products found</p>
-                <Button variant="outline" className="mt-3 md:mt-4 text-xs md:text-sm" onClick={clearFilters}>
+              <div className="text-center py-8 md:py-12 animate-scaleIn">
+                <p className="text-muted-foreground text-sm md:text-base mb-4">No products found 😔</p>
+                <Button variant="outline" className="text-xs md:text-sm hover:bg-primary hover:text-primary-foreground transition-all hover:scale-105" onClick={clearFilters}>
                   Clear Filters
                 </Button>
               </div>
