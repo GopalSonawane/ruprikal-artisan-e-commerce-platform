@@ -33,34 +33,35 @@ export default function LoginPage() {
       });
 
       if (error?.code) {
-        toast.error("Login Failed", {
-          description: "Invalid email or password. Please try again.",
-        });
+        toast.error("Invalid email or password. Please try again.");
         setLoading(false);
         return;
       }
 
-      toast.success("Welcome Back!", {
-        description: "You have successfully logged in",
-      });
+      toast.success("Welcome Back! 🎉");
 
-      // Check if user is admin and redirect accordingly
+      // Check if user is admin (gracefully handle if user profile doesn't exist)
       const token = localStorage.getItem("bearer_token");
-      if (data?.user?.id) {
-        const profileRes = await fetch(`/api/user-profiles?userId=${data.user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      if (data?.user?.id && token) {
+        try {
+          const profileRes = await fetch(`/api/user-profiles?userId=${data.user.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        if (profileRes.ok) {
-          const profiles = await profileRes.json();
-          const userProfile = profiles.find((p: any) => p.userId === data.user.id);
-          
-          if (userProfile?.isAdmin) {
-            router.push("/admin");
-            return;
+          if (profileRes.ok) {
+            const profiles = await profileRes.json();
+            const userProfile = profiles.find((p: any) => p.userId === data.user.id);
+            
+            if (userProfile?.isAdmin) {
+              router.push("/admin");
+              return;
+            }
           }
+        } catch (err) {
+          // Silently fail - user profile might not exist yet, that's ok
+          console.log("User profile check skipped");
         }
       }
 
@@ -68,9 +69,7 @@ export default function LoginPage() {
       router.push(redirect);
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Error", {
-        description: "An error occurred during login",
-      });
+      toast.error("An error occurred during login");
     } finally {
       setLoading(false);
     }
@@ -79,7 +78,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 px-4 animate-fadeIn">
       <div className="w-full max-w-md">
-        {/* Back to Website Button */}
         <Link 
           href="/" 
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-4 transition-all duration-300 hover:scale-105 font-medium"
@@ -89,7 +87,6 @@ export default function LoginPage() {
         </Link>
 
         <div className="bg-card/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border-2 border-primary/20 animate-scaleIn">
-          {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-110 transition-transform duration-300">
               Ruprikal

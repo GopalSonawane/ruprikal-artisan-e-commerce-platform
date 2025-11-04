@@ -10,13 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSession } from "@/lib/auth-client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import Link from "next/link";
 
 export default function CheckoutPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { toast } = useToast();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -49,6 +48,13 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (formData.pincode.length === 6) {
       checkShipping();
+    } else if (formData.pincode.length === 0) {
+      // Reset to default when pincode is cleared
+      setShippingInfo({
+        deliveryDays: 5,
+        shippingCharge: 50,
+        isCodAvailable: true
+      });
     }
   }, [formData.pincode]);
 
@@ -71,27 +77,30 @@ export default function CheckoutPage() {
       if (data.length > 0) {
         setShippingInfo(data[0]);
       } else {
-        setShippingInfo(null);
-        toast({
-          title: "Service Not Available",
-          description: "We don't deliver to this pincode yet",
-          variant: "destructive",
+        // Use default shipping if pincode not found
+        setShippingInfo({
+          deliveryDays: 7,
+          shippingCharge: 80,
+          isCodAvailable: true
         });
+        toast.info("Using standard delivery for your area");
       }
     } catch (error) {
       console.error("Failed to check shipping:", error);
+      // Use default shipping on error
+      setShippingInfo({
+        deliveryDays: 7,
+        shippingCharge: 80,
+        isCodAvailable: true
+      });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!shippingInfo) {
-      toast({
-        title: "Invalid Pincode",
-        description: "Please enter a valid pincode",
-        variant: "destructive",
-      });
+    if (formData.pincode.length !== 6) {
+      toast.error("Please enter a valid 6-digit pincode");
       return;
     }
 
@@ -103,7 +112,8 @@ export default function CheckoutPage() {
         return sum + price * item.quantity;
       }, 0);
 
-      const shippingCharge = shippingInfo.shippingCharge || 0;
+      // Use shipping info or default values
+      const shippingCharge = shippingInfo?.shippingCharge || 50;
       const taxAmount = (subtotal * 0.18); // 18% GST
       const totalAmount = subtotal + shippingCharge + taxAmount;
 
@@ -161,19 +171,12 @@ export default function CheckoutPage() {
         method: "DELETE",
       });
 
-      toast({
-        title: "Order Placed",
-        description: "Your order has been placed successfully",
-      });
+      toast.success("Order Placed Successfully! 🎉");
 
       router.push(`/order-confirmation?orderId=${order.id}`);
     } catch (error) {
       console.error("Failed to place order:", error);
-      toast({
-        title: "Error",
-        description: "Failed to place order. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to place order. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -230,7 +233,7 @@ export default function CheckoutPage() {
     return sum + price * item.quantity;
   }, 0);
 
-  const shippingCharge = shippingInfo?.shippingCharge || 0;
+  const shippingCharge = shippingInfo?.shippingCharge || 50;
   const taxAmount = subtotal * 0.18; // 18% GST
   const totalAmount = subtotal + shippingCharge + taxAmount;
 
@@ -288,7 +291,7 @@ export default function CheckoutPage() {
                       onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                       required
                     />
-                    {shippingInfo && (
+                    {shippingInfo && formData.pincode.length === 6 && (
                       <p className="text-sm text-green-600 mt-1">
                         ✓ Delivery in {shippingInfo.deliveryDays} days
                       </p>
@@ -390,9 +393,9 @@ export default function CheckoutPage() {
                   type="submit"
                   className="w-full"
                   size="lg"
-                  disabled={submitting || !shippingInfo}
+                  disabled={submitting}
                 >
-                  {submitting ? "Placing Order..." : "Place Order"}
+                  {submitting ? "Placing Order... ⏳" : "Place Order 🚀"}
                 </Button>
               </div>
             </div>
